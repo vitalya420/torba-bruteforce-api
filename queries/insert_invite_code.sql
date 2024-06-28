@@ -1,0 +1,1 @@
+INSERT INTO invite_codes(code, created_by, created_at) VALUES (:code, :created_by, :created_at);

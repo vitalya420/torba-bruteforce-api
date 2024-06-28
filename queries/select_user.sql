@@ -1,0 +1,1 @@
+SELECT telegram_id, active_invite_code, display_name, created_at FROM users WHERE telegram_id = :telegram_id;

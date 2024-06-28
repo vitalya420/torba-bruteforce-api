@@ -1,0 +1,1 @@
+UPDATE users SET active_invite_code = :code WHERE telegram_id = :telegram_id;

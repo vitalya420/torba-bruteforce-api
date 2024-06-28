@@ -1,0 +1,1 @@
+INSERT INTO users(telegram_id, display_name, created_at) VALUES (:telegram_id, :display_name, :created_at);
