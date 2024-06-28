@@ -7,6 +7,7 @@ from aiosqlite import Connection, Cursor
 
 from app.database.decorators import query_file
 from app.database.exceptions import QueryNotFound, InviteCodeExists
+from app.schemas.qr_codes import UserQrCodeCount
 from app.schemas.user import UserSchema, UserJoinedInviteCode
 from app.utils.miscs import get_utc_now
 
@@ -83,7 +84,11 @@ class Database:
         ...
 
     @query_file("count_users_qr_codes")
-    async def count_users_qr_codes(self):
+    async def count_users_qr_codes(self) -> list[UserQrCodeCount]:
+        ...
+
+    @query_file("create_qr_code", commit_after=True)
+    async def create_qr_code(self, text: str, code: str, telegram_id: int, created_at: int, extra_json: str):
         ...
 
     async def insert_invite_code(self, code: str, telegram_id: int, created_at: int):
