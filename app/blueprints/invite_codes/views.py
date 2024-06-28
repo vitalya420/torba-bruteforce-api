@@ -8,11 +8,6 @@ from . import invite_codes
 from app.backroung_tasks.tasks import after_user_active_invite_code_changed
 
 
-# @invite_codes.get('/')
-# async def get_invite_codes(request: Request):
-#     pass
-
-
 @invite_codes.post('/')
 @telegram_user_required
 async def set_invite_code(request: Request):

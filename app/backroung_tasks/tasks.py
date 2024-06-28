@@ -12,7 +12,8 @@ from app.utils.miscs import random_first_name, random_last_name, get_utc_now
 async def do_bruteforce(telegram_id: int, code: str):
     qr_codes = []
     count = await db.count_user_qr_codes_for_code(telegram_id, code)
-    for i in range(max(0, 3 - count)):
+    amount = max(0, 3 - count)
+    for i in range(amount):
         phone = format_number(random_vodafone_number())
         first_name, last_name = random_first_name(), random_last_name()
         account = await create_account(phone, code, first_name, last_name)

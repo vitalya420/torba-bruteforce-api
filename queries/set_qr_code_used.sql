@@ -1,0 +1,1 @@
+UPDATE qr_codes SET used = TRUE, used_at = :used_at WHERE text = :text;

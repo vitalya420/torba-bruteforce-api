@@ -116,6 +116,13 @@ class Database:
     async def select_qr_codes(self, telegram_id: int) -> list[QRCode]:
         ...
 
+    @query_file("set_qr_code_used", commit_after=True)
+    async def _set_qr_code_used(self, text: str, used_at: int):
+        ...
+
+    async def set_qr_code_used(self, text: str):
+        return await self._set_qr_code_used(text, get_utc_now())
+
     async def insert_invite_code(self, code: str, telegram_id: int, created_at: int):
         # TODO: Transaction
         try:
