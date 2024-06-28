@@ -4,7 +4,7 @@ from sanic import Sanic
 
 from .backroung_tasks import BackgroundTasksManager
 from .backroung_tasks.tasks import after_server_started
-from .database import db
+
 
 app = Sanic(__name__)
 task_manager = BackgroundTasksManager()
@@ -20,8 +20,8 @@ app.blueprint([
 
 @app.before_server_start
 async def connect_db(app_: Sanic):
-    await db.connect()
-    counts = await db.count_users_qr_codes()
+    # await db.connect()
+    # counts = await db.count_users_qr_codes()
     task_manager.loop = asyncio.get_event_loop()
     app_.ctx.task_manager = task_manager
     task_manager.create(after_server_started(counts))
@@ -29,4 +29,5 @@ async def connect_db(app_: Sanic):
 
 @app.before_server_stop
 async def close_db(*_):
-    await db.close()
+    # await db.close()
+    pass

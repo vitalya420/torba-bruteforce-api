@@ -133,5 +133,8 @@ class Database:
             await self.update_users_invite_code(code, telegram_id)
             await self.insert_history_line(telegram_id, code, get_utc_now())
 
+    async def transaction(self):
+        await self.connection.execute("BEGIN")
+
 
 db = Database('database.db', 'queries')

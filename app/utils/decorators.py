@@ -1,3 +1,5 @@
+from functools import wraps
+
 from sanic import Request, BadRequest
 
 from app.database import db
@@ -5,6 +7,7 @@ from app.utils.miscs import get_utc_now
 
 
 def telegram_user_required(func):
+    @wraps(func)
     async def decorator(request: Request, *args, **kwargs):
         if request.ctx.telegram_user is None:
             raise BadRequest

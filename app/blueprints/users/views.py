@@ -22,7 +22,7 @@ async def get_user(request: Request):
     return request.ctx.user
 
 
-@users.get('/qr_code', name='get qr code')
+@users.get('/qr_code')
 @telegram_user_required
 @serializer(named_tuple_serializer)
 async def get_next_qr_code(request: Request):
@@ -30,9 +30,9 @@ async def get_next_qr_code(request: Request):
     return qr
 
 
-@users.patch('/qr_code', name='set qr code used')
+@users.patch('/qr_code')
 @telegram_user_required
-@serializer(named_tuple_serializer)
+# @serializer(named_tuple_serializer)
 async def set_qr_code_used(request: Request):
     text = request.json.get('text', None)
     if text is None:
@@ -45,9 +45,9 @@ async def set_qr_code_used(request: Request):
     return qr
 
 
-@users.get('/qr_codes', name='list qr codes')
+@users.get('/qr_codes')
 @telegram_user_required
-@serializer(many_named_tuple_serializer)
+# @serializer(many_named_tuple_serializer)
 async def list_qr_codes(request: Request):
     qr_codes = await db.select_qr_codes(request.ctx.user.telegram_id)
     return qr_codes

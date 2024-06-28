@@ -12,3 +12,7 @@ class RecordNotFound(Exception):
 
 class InviteCodeExists(Exception):
     pass
+
+
+class Rollback(Exception):
+    pass
