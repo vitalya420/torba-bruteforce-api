@@ -1,0 +1,1 @@
+SELECT COUNT(*) as count FROM qr_codes WHERE user = :telegram_id AND invite_code = :code AND used = FALSE;

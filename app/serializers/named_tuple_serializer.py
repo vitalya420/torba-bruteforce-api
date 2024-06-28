@@ -11,6 +11,8 @@ def convert_named_tuple_to_dict(instance):
 
 
 def named_tuple_serializer(instance, status):
+    if instance is None:
+        return json({}, status=status)
     as_dict = convert_named_tuple_to_dict(instance)
     return json(as_dict, status=status)
 

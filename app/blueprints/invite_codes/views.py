@@ -26,5 +26,7 @@ async def set_invite_code(request: Request):
     except InviteCodeExists:
         retval = json({'ok': True, 'already_exists': True})
 
-    request.app.ctx.task_manager.create(after_user_active_invite_code_changed(request.ctx.user))
+    request.app.ctx.task_manager.create(after_user_active_invite_code_changed(
+        await db.select_user(request.ctx.user.telegram_id)
+    ))
     return retval

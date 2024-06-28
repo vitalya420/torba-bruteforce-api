@@ -1,3 +1,4 @@
+import asyncio
 import os.path
 import sqlite3
 from typing import Optional, Union
@@ -7,7 +8,7 @@ from aiosqlite import Connection, Cursor
 
 from app.database.decorators import query_file
 from app.database.exceptions import QueryNotFound, InviteCodeExists
-from app.schemas.qr_codes import UserQrCodeCount
+from app.schemas.qr_codes import UserQrCodeCount, QRCode
 from app.schemas.user import UserSchema, UserJoinedInviteCode
 from app.utils.miscs import get_utc_now
 
@@ -24,11 +25,17 @@ def load_queries_from_folder(folder: str) -> dict:
     return _mapping
 
 
+async def int_from_count(cursor: Cursor) -> int:
+    result = await cursor.fetchone()
+    return result[0]
+
+
 class Database:
     def __init__(self, db_path: str, queries_folder: str):
         self.db_path = db_path
         self.queries_mapping = load_queries_from_folder(queries_folder)
         self.connection: Union[Connection, None] = None
+        self._lock = asyncio.Lock()
 
     async def connect(self):
         if self.connection is None:
@@ -43,9 +50,15 @@ class Database:
         query = self.queries_mapping.get(query_name, None)
         if query is None:
             raise QueryNotFound(f"Query {query} not found")
-        cursor = await self.connection.execute(query, params or ())
-        if commit:
-            await self.commit()
+
+        await self._lock.acquire()
+        try:
+            cursor = await self.connection.execute(query, params or ())
+            if commit:
+                await self.commit()
+        finally:
+            self._lock.release()
+
         return cursor
 
     async def commit(self):
@@ -89,6 +102,18 @@ class Database:
 
     @query_file("create_qr_code", commit_after=True)
     async def create_qr_code(self, text: str, code: str, telegram_id: int, created_at: int, extra_json: str):
+        ...
+
+    @query_file("count_user_qr_codes_for_code", cursor_callback=int_from_count)
+    async def count_user_qr_codes_for_code(self, telegram_id: int, code: str) -> int:
+        ...
+
+    @query_file("select_first_qr_code")
+    async def select_first_qr_code(self, telegram_id: int) -> Optional[QRCode]:
+        ...
+
+    @query_file("select_qr_codes")
+    async def select_qr_codes(self, telegram_id: int) -> list[QRCode]:
         ...
 
     async def insert_invite_code(self, code: str, telegram_id: int, created_at: int):
